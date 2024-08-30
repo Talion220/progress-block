@@ -12,6 +12,25 @@ body {
   flex-direction: column;
 }
 
+.loader {
+  max-width: 134px;
+  max-height: 134px;
+  margin: 20px auto;
+}
+
+.loader-background {
+  fill: none;
+  stroke: rgba(223, 230, 240, 1);
+  stroke-width: 4;
+}
+
+.loader-progress {
+  fill: none;
+  stroke-width: 4;
+  stroke: rgba(0, 93, 255, 1);
+  transition: stroke-dasharray 0.5s;
+}
+
 .progress-container-api {
   display: flex;
   flex-direction: column;
@@ -22,6 +41,7 @@ body {
   border-radius: 14px;
   width: 38px;
   height: 24px;
+  text-align: center;
   margin-right: 10px;
   box-sizing: border-box;
 }
@@ -52,7 +72,7 @@ input[type="number"] {
   position: relative;
   width: 38px;
   height: 24px;
-  background-color: #ccc;
+  background-color: rgba(223, 230, 240, 1);
   border-radius: 34px;
   transition: 0.4s;
   cursor: pointer;

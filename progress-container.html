@@ -11,6 +11,22 @@
     <div class="progress-container">
       <div class="progress-container-loader">
         <p>Progress</p>
+        <svg id="progress" viewBox="0 0 48 48" class="loader">
+          <path
+            class="loader-background"
+            d="M24 3
+              a 21 21 0 0 1 0 42
+              a 21 21 0 0 1 0 -42"
+          />
+          <path
+            id="progress-circle"
+            class="loader-progress"
+            stroke-dasharray="0, 132"
+            d="M24 3
+              a 21 21 0 0 1 0 42
+              a 21 21 0 0 1 0 -42"
+          />
+        </svg>
       </div>
 
       <div class="progress-container-api">
