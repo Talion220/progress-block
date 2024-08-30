@@ -5,6 +5,7 @@ body {
   height: 100vh;
   margin: 0;
   font-family: Arial, sans-serif;
+  font-weight: 600;
 }
 
 .progress-container {
@@ -103,4 +104,19 @@ input[type="number"] {
 
 .toggle-input:checked + .toggle-slider:before {
   transform: translateX(14px);
+}
+
+.hidden {
+  display: none;
+}
+
+.animated {
+  animation: rotate 2s linear infinite;
+  transform-origin: 50% 50%;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
 }
