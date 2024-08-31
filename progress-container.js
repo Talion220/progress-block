@@ -1,15 +1,21 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const progressCircle = document.getElementById("progress-circle");
-  const progressValueInput = document.getElementById("progress-value");
-  const animateCheckbox = document.getElementById("animate");
-  const hideCheckbox = document.getElementById("hide");
+function loaderApi(item) {
+  const progressLoader = document.querySelector(item.progressLoader);
+  const progressValueInput = document.querySelector(item.progressValueInput);
+  const animateCheckbox = document.querySelector(item.animateCheckbox);
+  const hideCheckbox = document.querySelector(item.hideCheckbox);
   const progressContainerLoader = document.querySelector(
-    ".progress-container-loader"
+    item.progressContainerLoader
   );
 
   let lastInputValue = progressValueInput.value;
 
-  progressValueInput.addEventListener("input", function () {
+  function renderLoaderProgress() {
+    const validateValue = validateInput();
+    const offset = (validateValue / 100) * 132;
+    progressLoader.style.strokeDasharray = `${offset}, 132`;
+  }
+
+  function validateInput() {
     let value = progressValueInput.value;
 
     if (parseInt(value) > 100) {
@@ -27,23 +33,36 @@ document.addEventListener("DOMContentLoaded", function () {
     lastInputValue = value;
     value = parseInt(value) || 0;
     progressValueInput.value = value;
-    const offset = (value / 100) * 132;
-    progressCircle.style.strokeDasharray = `${offset}, 132`;
-  });
+    return value;
+  }
 
-  animateCheckbox.addEventListener("change", function () {
-    if (this.checked) {
-      progressCircle.classList.add("animated");
+  function animateLoader() {
+    if (animateCheckbox.checked) {
+      progressLoader.classList.add("animated");
     } else {
-      progressCircle.classList.remove("animated");
+      progressLoader.classList.remove("animated");
     }
-  });
+  }
 
-  hideCheckbox.addEventListener("change", function () {
-    if (this.checked) {
+  function hideLoader() {
+    if (hideCheckbox.checked) {
       progressContainerLoader.classList.add("hidden");
     } else {
       progressContainerLoader.classList.remove("hidden");
     }
+  }
+
+  progressValueInput.addEventListener("input", renderLoaderProgress);
+  animateCheckbox.addEventListener("change", animateLoader);
+  hideCheckbox.addEventListener("change", hideLoader);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loaderApi({
+    progressLoader: "#progress-loader",
+    progressValueInput: "#progress-value",
+    animateCheckbox: "#animate",
+    hideCheckbox: "#hide",
+    progressContainerLoader: ".progress-container-loader",
   });
 });

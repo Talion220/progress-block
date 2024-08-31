@@ -29,7 +29,7 @@ body {
   stroke-width: 4;
 }
 
-.loader-progress {
+.progress-loader {
   fill: none;
   stroke-width: 4;
   stroke: rgba(0, 93, 255, 1);
@@ -54,11 +54,6 @@ body {
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type="number"] {
-  -moz-appearance: textfield;
 }
 
 .toggle {
