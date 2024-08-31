@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     lastInputValue = value;
-    value = Math.min(100, Math.max(0, parseInt(value) || 0));
+    value = parseInt(value) || 0;
     progressValueInput.value = value;
     const offset = (value / 100) * 132;
     progressCircle.style.strokeDasharray = `${offset}, 132`;

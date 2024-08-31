@@ -1,13 +1,14 @@
 body {
   font-family: Arial, sans-serif;
   font-weight: 600;
+  height: 100%;
 }
 
 .progress-container {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  height: 80vh;
+  height: 70vh;
   margin: 0;
   flex-direction: column;
 }
@@ -110,7 +111,7 @@ input[type="number"] {
 }
 
 .hidden {
-  display: none;
+  visibility: hidden;
 }
 
 .animated {
