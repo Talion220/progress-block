@@ -1,8 +1,10 @@
+import style from "./progress-block.css?inline";
+
 export function progressBlockTemplate(): string {
   return `
-    <link rel="stylesheet" href="src/templates/progress-block.css">
+          <style>${style}</style>
           <div class="progress-block">
-            <p class="progress-p">Progress</p>
+            <h5 class="progress-h">Progress</h5>
             <div class="progress-container">
               <div class="progress-container-loader">
                 <svg id="progress" viewBox="0 0 48 48" class="loader">
