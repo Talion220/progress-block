@@ -142,10 +142,12 @@ export class ProgressBlock extends HTMLElement {
   }
 
   private renderLoaderProgress() {
-    const validatedValue = this.validateInput();
-    const offset = (validatedValue / 100) * 132;
     if (this.progressLoader) {
-      this.progressLoader.style.strokeDasharray = `${offset}, 132`;
+      const radius = 21;
+      const circumference = 2 * Math.PI * radius;
+      const validatedValue = this.validateInput();
+      const offset = (validatedValue / 100) * circumference;
+      this.progressLoader.style.strokeDasharray = `${offset}, ${circumference}`;
     }
   }
 
