@@ -149,21 +149,19 @@ export class ProgressBlock extends HTMLElement {
 
   private animateLoader() {
     if (this.animateCheckbox && this.progressLoader) {
-      if (this.animateCheckbox.checked) {
-        this.progressLoader.classList.add("animated");
-      } else {
-        this.progressLoader.classList.remove("animated");
-      }
+      this.progressLoader.classList.toggle(
+        "animated",
+        this.animateCheckbox.checked
+      );
     }
   }
 
   private hideLoader() {
     if (this.hideCheckbox && this.progressContainerLoader) {
-      if (this.hideCheckbox.checked) {
-        this.progressContainerLoader.classList.add("hidden");
-      } else {
-        this.progressContainerLoader.classList.remove("hidden");
-      }
+      this.progressContainerLoader.classList.toggle(
+        "hidden",
+        this.hideCheckbox.checked
+      );
     }
   }
 }

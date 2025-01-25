@@ -1,6 +1,6 @@
 export function progressBlockTemplate(): string {
   return `
-    <link rel="stylesheet" href="src/style.css">
+    <link rel="stylesheet" href="src/templates/progress-block.css">
           <div class="progress-block">
             <p class="progress-p">Progress</p>
             <div class="progress-container">
