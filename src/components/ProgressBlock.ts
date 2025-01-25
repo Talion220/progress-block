@@ -15,32 +15,57 @@ export class ProgressBlock extends HTMLElement {
     const shadow = this.attachShadow({ mode: "open" });
     shadow.innerHTML = progressBlockTemplate();
 
-    this.progressLoader = shadow.querySelector("#progress-loader");
-    this.progressValueInput = shadow.querySelector("#progress-value");
-    this.animateCheckbox = shadow.querySelector("#animate");
-    this.hideCheckbox = shadow.querySelector("#hide");
-    this.progressContainerLoader = shadow.querySelector(
+    this.progressLoader = this.getElement<SVGPathElement>(
+      shadow,
+      "#progress-loader"
+    );
+    this.progressValueInput = this.getElement<HTMLInputElement>(
+      shadow,
+      "#progress-value"
+    );
+    this.animateCheckbox = this.getElement<HTMLInputElement>(
+      shadow,
+      "#animate"
+    );
+    this.hideCheckbox = this.getElement<HTMLInputElement>(shadow, "#hide");
+    this.progressContainerLoader = this.getElement<HTMLElement>(
+      shadow,
       ".progress-container-loader"
     );
 
-    if (this.progressValueInput) {
-      this.updateFromAttributes();
-      this.progressValueInput.addEventListener(
-        "input",
-        this.renderLoaderProgress.bind(this)
-      );
+    if (
+      !this.progressLoader ||
+      !this.progressValueInput ||
+      !this.animateCheckbox ||
+      !this.hideCheckbox ||
+      !this.progressContainerLoader
+    ) {
+      console.error("The shadow DOM is missing some required elements.");
+      return;
     }
 
-    if (this.animateCheckbox) {
-      this.animateCheckbox.addEventListener(
-        "change",
-        this.animateLoader.bind(this)
-      );
-    }
+    this.updateFromAttributes();
 
-    if (this.hideCheckbox) {
-      this.hideCheckbox.addEventListener("change", this.hideLoader.bind(this));
+    this.progressValueInput.addEventListener(
+      "input",
+      this.renderLoaderProgress.bind(this)
+    );
+    this.animateCheckbox.addEventListener(
+      "change",
+      this.animateLoader.bind(this)
+    );
+    this.hideCheckbox.addEventListener("change", this.hideLoader.bind(this));
+  }
+
+  private getElement<T extends Element>(
+    root: ShadowRoot,
+    selector: string
+  ): T | null {
+    const element = root.querySelector<T>(selector);
+    if (!element) {
+      console.error(`Element not found for selector: ${selector}`);
     }
+    return element;
   }
 
   updateFromAttributes() {
