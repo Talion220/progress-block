@@ -12,19 +12,19 @@ export function progressBlockTemplate(): string {
               </div>
               <div class="progress-container-api">
                 <label>
-                  <input type="number" id="progress-value" class="progress-input" value="0" min="0" max="100" />Value
+                  <input type="number" id="progress-value" class="progress-input" aria-label="Value" value="0" min="0" max="100" />Value
                 </label>
                 <div class="toggle">
                   <label class="toggle-label">
                     <input type="checkbox" id="animate" class="toggle-input" />
-                    <span class="toggle-slider"></span>
+                    <span class="toggle-slider" aria-label="Animate"></span>
                     Animate
                   </label>
                 </div>
                 <div class="toggle">
                   <label class="toggle-label">
                     <input type="checkbox" id="hide" class="toggle-input" />
-                    <span class="toggle-slider"></span>
+                    <span class="toggle-slider" aria-label="Hide"></span>
                     Hide
                   </label>
                 </div>
