@@ -37,6 +37,8 @@ body {
 
 .progress-container-loader {
   width: 120px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
 .loader {
@@ -54,7 +56,8 @@ body {
   fill: none;
   stroke-width: 4;
   stroke: rgba(0, 93, 255, 1);
-  transition: stroke-dasharray 0.5s;
+  transition: stroke-dasharray;
+  transform-origin: center;
 }
 
 .progress-container-api {
@@ -128,12 +131,14 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .hidden {
-  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .animated {
   animation: rotate 2s linear infinite;
   transform-origin: 50% 50%;
+  transform-origin: center;
 }
 
 @keyframes rotate {
