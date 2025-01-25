@@ -11,10 +11,21 @@ export class ProgressBlock extends HTMLElement {
   private hideCheckbox: HTMLInputElement | null = null;
   private progressContainerLoader: HTMLElement | null = null;
 
+  private value: number = 0;
+  private isAnimated: boolean = false;
+  private isHidden: boolean = false;
+
   connectedCallback() {
     const shadow = this.attachShadow({ mode: "open" });
     shadow.innerHTML = progressBlockTemplate();
 
+    this.initializeElements(shadow);
+    this.updateFromAttributes();
+
+    this.addEventListeners();
+  }
+
+  private initializeElements(shadow: ShadowRoot) {
     this.progressLoader = this.getElement<SVGPathElement>(
       shadow,
       "#progress-loader"
@@ -41,51 +52,70 @@ export class ProgressBlock extends HTMLElement {
       !this.progressContainerLoader
     ) {
       console.error("The shadow DOM is missing some required elements.");
-      return;
     }
-
-    this.updateFromAttributes();
-
-    this.progressValueInput.addEventListener(
-      "input",
-      this.renderLoaderProgress.bind(this)
-    );
-    this.animateCheckbox.addEventListener(
-      "change",
-      this.animateLoader.bind(this)
-    );
-    this.hideCheckbox.addEventListener("change", this.hideLoader.bind(this));
   }
 
-  private getElement<T extends Element>(
-    root: ShadowRoot,
-    selector: string
-  ): T | null {
-    const element = root.querySelector<T>(selector);
-    if (!element) {
-      console.error(`Element not found for selector: ${selector}`);
+  private addEventListeners() {
+    if (this.progressValueInput) {
+      this.progressValueInput.addEventListener(
+        "input",
+        this.renderLoaderProgress.bind(this)
+      );
     }
-    return element;
-  }
-
-  updateFromAttributes() {
-    const value: string | null = this.getAttribute("value");
-    if (value !== null && this.progressValueInput) {
-      this.progressValueInput.value = value;
-      this.renderLoaderProgress();
-    }
-
-    const isAnimate: string | null = this.getAttribute("isAnimate");
     if (this.animateCheckbox) {
-      this.animateCheckbox.checked = isAnimate === "true";
-      this.animateLoader();
+      this.animateCheckbox.addEventListener("change", () => {
+        this.isAnimated = this.animateCheckbox!.checked;
+        this.toggleAnimation();
+      });
     }
-
-    const isHide: string | null = this.getAttribute("isHide");
     if (this.hideCheckbox) {
-      this.hideCheckbox.checked = isHide === "true";
-      this.hideLoader();
+      this.hideCheckbox.addEventListener("change", () => {
+        this.isHidden = this.hideCheckbox!.checked;
+        this.toggleVisibility();
+      });
     }
+  }
+
+  private updateFromAttributes() {
+    this.value = this.getAttributeValue("value", 0);
+    this.isAnimated = this.getAttributeValue("isAnimate", false);
+    this.isHidden = this.getAttributeValue("isHide", false);
+
+    this.updateValue();
+    this.updateAnimation();
+    this.updateVisibility();
+  }
+
+  private getAttributeValue(attr: string, defaultValue: any): any {
+    const value = this.getAttribute(attr);
+    if (typeof defaultValue === "number") {
+      return value !== null ? Number(value) : defaultValue;
+    }
+    if (typeof defaultValue === "boolean") {
+      return value === "true";
+    }
+    return value || defaultValue;
+  }
+
+  private updateValue() {
+    if (this.progressValueInput) {
+      this.progressValueInput.value = String(this.value);
+    }
+    this.renderLoaderProgress();
+  }
+
+  private updateAnimation() {
+    if (this.animateCheckbox) {
+      this.animateCheckbox.checked = this.isAnimated;
+    }
+    this.toggleAnimation();
+  }
+
+  private updateVisibility() {
+    if (this.hideCheckbox) {
+      this.hideCheckbox.checked = this.isHidden;
+    }
+    this.toggleVisibility();
   }
 
   attributeChangedCallback(
@@ -97,29 +127,23 @@ export class ProgressBlock extends HTMLElement {
 
     switch (name) {
       case "value":
-        if (newValue !== null && this.progressValueInput) {
-          this.progressValueInput.value = newValue;
-          this.renderLoaderProgress();
-        }
+        this.value = this.getAttributeValue("value", 0);
+        this.updateValue();
         break;
       case "isAnimate":
-        if (this.animateCheckbox) {
-          this.animateCheckbox.checked = newValue === "true";
-          this.animateLoader();
-        }
+        this.isAnimated = this.getAttributeValue("isAnimate", false);
+        this.updateAnimation();
         break;
       case "isHide":
-        if (this.hideCheckbox) {
-          this.hideCheckbox.checked = newValue === "true";
-          this.hideLoader();
-        }
+        this.isHidden = this.getAttributeValue("isHide", false);
+        this.updateVisibility();
         break;
     }
   }
 
   private renderLoaderProgress() {
-    const validateValue = this.validateInput();
-    const offset = (validateValue / 100) * 132;
+    const validatedValue = this.validateInput();
+    const offset = (validatedValue / 100) * 132;
     if (this.progressLoader) {
       this.progressLoader.style.strokeDasharray = `${offset}, 132`;
     }
@@ -147,21 +171,26 @@ export class ProgressBlock extends HTMLElement {
     return Number(value);
   }
 
-  private animateLoader() {
-    if (this.animateCheckbox && this.progressLoader) {
-      this.progressLoader.classList.toggle(
-        "animated",
-        this.animateCheckbox.checked
-      );
+  private toggleAnimation() {
+    if (this.progressLoader) {
+      this.progressLoader.classList.toggle("animated", this.isAnimated);
     }
   }
 
-  private hideLoader() {
-    if (this.hideCheckbox && this.progressContainerLoader) {
-      this.progressContainerLoader.classList.toggle(
-        "hidden",
-        this.hideCheckbox.checked
-      );
+  private toggleVisibility() {
+    if (this.progressContainerLoader) {
+      this.progressContainerLoader.classList.toggle("hidden", this.isHidden);
     }
+  }
+
+  private getElement<T extends Element>(
+    root: ShadowRoot,
+    selector: string
+  ): T | null {
+    const element = root.querySelector<T>(selector);
+    if (!element) {
+      console.error(`Element not found for selector: ${selector}`);
+    }
+    return element;
   }
 }
