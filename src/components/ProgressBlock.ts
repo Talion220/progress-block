@@ -1,19 +1,26 @@
 import { progressBlockTemplate } from "../templates/progressBlockTemplate";
 
 export class ProgressBlock extends HTMLElement {
-  static get observedAttributes() {
-    return ["value", "isAnimate", "isHide"];
-  }
-
   private progressLoader: SVGPathElement | null = null;
   private progressValueInput: HTMLInputElement | null = null;
   private animateCheckbox: HTMLInputElement | null = null;
   private hideCheckbox: HTMLInputElement | null = null;
   private progressContainerLoader: HTMLElement | null = null;
 
-  private value: number = 0;
-  private isAnimated: boolean = false;
-  private isHidden: boolean = false;
+  private value: number;
+  private isAnimated: boolean;
+  private isHidden: boolean;
+
+  constructor() {
+    super();
+    this.value = 0;
+    this.isAnimated = this.getAttribute("isAnimate") === "true";
+    this.isHidden = this.getAttribute("isHide") === "true";
+  }
+
+  static get observedAttributes() {
+    return ["value", "isAnimate", "isHide"];
+  }
 
   connectedCallback() {
     const shadow = this.attachShadow({ mode: "open" });
@@ -23,6 +30,27 @@ export class ProgressBlock extends HTMLElement {
     this.updateFromAttributes();
 
     this.addEventListeners();
+  }
+
+  attributeChangedCallback(
+    name: string,
+    oldValue: string | null,
+    newValue: string | null
+  ) {
+    if (oldValue === newValue) return;
+
+    switch (name) {
+      case "value":
+        this.value = newValue !== null ? Number(newValue) : 0;
+        break;
+      case "isAnimate":
+        this.isAnimated = newValue !== null;
+        break;
+      case "isHide":
+        this.isHidden = newValue !== null;
+        break;
+    }
+    this.updateFromAttributes();
   }
 
   private initializeElements(shadow: ShadowRoot) {
@@ -77,24 +105,9 @@ export class ProgressBlock extends HTMLElement {
   }
 
   private updateFromAttributes() {
-    this.value = this.getAttributeValue("value", 0);
-    this.isAnimated = this.getAttributeValue("isAnimate", false);
-    this.isHidden = this.getAttributeValue("isHide", false);
-
     this.updateValue();
     this.updateAnimation();
     this.updateVisibility();
-  }
-
-  private getAttributeValue(attr: string, defaultValue: any): any {
-    const value = this.getAttribute(attr);
-    if (typeof defaultValue === "number") {
-      return value !== null ? Number(value) : defaultValue;
-    }
-    if (typeof defaultValue === "boolean") {
-      return value === "true";
-    }
-    return value || defaultValue;
   }
 
   private updateValue() {
@@ -116,29 +129,6 @@ export class ProgressBlock extends HTMLElement {
       this.hideCheckbox.checked = this.isHidden;
     }
     this.toggleVisibility();
-  }
-
-  attributeChangedCallback(
-    name: string,
-    oldValue: string | null,
-    newValue: string | null
-  ) {
-    if (oldValue === newValue) return;
-
-    switch (name) {
-      case "value":
-        this.value = this.getAttributeValue("value", 0);
-        this.updateValue();
-        break;
-      case "isAnimate":
-        this.isAnimated = this.getAttributeValue("isAnimate", false);
-        this.updateAnimation();
-        break;
-      case "isHide":
-        this.isHidden = this.getAttributeValue("isHide", false);
-        this.updateVisibility();
-        break;
-    }
   }
 
   private renderLoaderProgress() {
