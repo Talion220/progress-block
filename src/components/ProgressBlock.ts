@@ -42,15 +42,17 @@ export class ProgressBlock extends HTMLElement {
     switch (name) {
       case "value":
         this.value = newValue !== null ? Number(newValue) : 0;
+        this.updateValue();
         break;
       case "isAnimate":
         this.isAnimated = newValue !== null;
+        this.updateAnimation();
         break;
       case "isHide":
         this.isHidden = newValue !== null;
+        this.updateVisibility();
         break;
     }
-    this.updateFromAttributes();
   }
 
   private initializeElements(shadow: ShadowRoot) {
@@ -142,25 +144,21 @@ export class ProgressBlock extends HTMLElement {
   }
 
   private validateInput(): number {
-    let value = this.progressValueInput ? this.progressValueInput.value : "0";
-
-    if (Number(value) > 100) {
-      value = "100";
+    if (!this.progressValueInput) {
+      return 0;
     }
 
-    if (value.length > 3 && value[0] !== "0") {
-      value = value.slice(0, 3);
+    let value: number = Number(this.progressValueInput.value);
+
+    if (isNaN(value)) {
+      value = 0;
     }
 
-    if (value.length > 1 && value[0] === "0") {
-      value = value.slice(1);
-    }
+    value = Math.max(0, Math.min(100, value));
 
-    value = value || "0";
-    if (this.progressValueInput) {
-      this.progressValueInput.value = value;
-    }
-    return Number(value);
+    this.progressValueInput.value = String(value);
+
+    return value;
   }
 
   private toggleAnimation() {

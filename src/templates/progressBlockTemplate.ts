@@ -4,7 +4,7 @@ export function progressBlockTemplate(): string {
   return `
           <style>${style}</style>
           <div class="progress-block">
-            <h5 class="progress-h">Progress</h5>
+            <h4 class="progress-h">Progress</h4>
             <div class="progress-container">
               <div class="progress-container-loader">
                 <svg id="progress" viewBox="0 0 48 48" class="loader">
@@ -14,7 +14,7 @@ export function progressBlockTemplate(): string {
               </div>
               <div class="progress-container-api">
                 <label>
-                  <input type="number" id="progress-value" class="progress-input" aria-label="Value" value="0" min="0" max="100" />Value
+                  <input type="number" id="progress-value" class="progress-input" aria-label="Value" min="0" max="100" />Value
                 </label>
                 <div class="toggle">
                   <label class="toggle-label">
