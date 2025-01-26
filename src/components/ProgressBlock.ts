@@ -1,4 +1,5 @@
-import { progressBlockTemplate } from "../templates/progressBlockTemplate";
+import { progressBlockTemplate } from "./template/progressBlockTemplate";
+import { initializeElements, addEventListeners } from "./helpers";
 
 export class ProgressBlock extends HTMLElement {
   private progressLoader: SVGCircleElement | null = null;
@@ -25,11 +26,9 @@ export class ProgressBlock extends HTMLElement {
   connectedCallback() {
     const shadow = this.attachShadow({ mode: "open" });
     shadow.innerHTML = progressBlockTemplate();
-
-    this.initializeElements(shadow);
+    initializeElements(this, shadow);
     this.updateFromAttributes();
-
-    this.addEventListeners();
+    addEventListeners(this);
   }
 
   attributeChangedCallback(
@@ -38,7 +37,16 @@ export class ProgressBlock extends HTMLElement {
     newValue: string | null
   ) {
     if (oldValue === newValue) return;
+    this.handleAttributeChange(name, newValue);
+  }
 
+  private updateFromAttributes() {
+    this.updateValue();
+    this.updateAnimation();
+    this.updateVisibility();
+  }
+
+  private handleAttributeChange(name: string, newValue: string | null) {
     switch (name) {
       case "value":
         this.value = newValue !== null ? Number(newValue) : 0;
@@ -53,63 +61,6 @@ export class ProgressBlock extends HTMLElement {
         this.updateVisibility();
         break;
     }
-  }
-
-  private initializeElements(shadow: ShadowRoot) {
-    this.progressLoader = this.getElement<SVGCircleElement>(
-      shadow,
-      "#progress-loader"
-    );
-    this.progressValueInput = this.getElement<HTMLInputElement>(
-      shadow,
-      "#progress-value"
-    );
-    this.animateCheckbox = this.getElement<HTMLInputElement>(
-      shadow,
-      "#animate"
-    );
-    this.hideCheckbox = this.getElement<HTMLInputElement>(shadow, "#hide");
-    this.progressContainerLoader = this.getElement<HTMLElement>(
-      shadow,
-      ".progress-container-loader"
-    );
-
-    if (
-      !this.progressLoader ||
-      !this.progressValueInput ||
-      !this.animateCheckbox ||
-      !this.hideCheckbox ||
-      !this.progressContainerLoader
-    ) {
-      console.error("The shadow DOM is missing some required elements.");
-    }
-  }
-
-  private addEventListeners() {
-    if (this.progressValueInput) {
-      this.progressValueInput.addEventListener(
-        "input",
-        this.renderLoaderProgress.bind(this)
-      );
-    }
-    if (this.animateCheckbox) {
-      this.animateCheckbox.addEventListener("change", () => {
-        this.isAnimated = this.animateCheckbox!.checked;
-        this.toggleAnimation();
-      });
-    }
-    if (this.hideCheckbox) {
-      this.hideCheckbox.addEventListener("change", () => {
-        this.isHidden = this.hideCheckbox!.checked;
-        this.toggleVisibility();
-      });
-    }
-  }
-
-  private updateFromAttributes() {
-    this.updateValue();
-    this.updateAnimation();
-    this.updateVisibility();
   }
 
   private updateValue() {
@@ -149,13 +100,7 @@ export class ProgressBlock extends HTMLElement {
     }
 
     let value: number = Number(this.progressValueInput.value);
-
-    if (isNaN(value)) {
-      value = 0;
-    }
-
-    value = Math.max(0, Math.min(100, value));
-
+    value = isNaN(value) ? 0 : Math.max(0, Math.min(100, value));
     this.progressValueInput.value = String(value);
 
     return value;
@@ -163,8 +108,9 @@ export class ProgressBlock extends HTMLElement {
 
   private toggleAnimation() {
     if (this.progressLoader) {
-      const playState = this.isAnimated ? "running" : "paused";
-      this.progressLoader.style.animationPlayState = playState;
+      this.progressLoader.style.animationPlayState = this.isAnimated
+        ? "running"
+        : "paused";
     }
   }
 
@@ -172,16 +118,5 @@ export class ProgressBlock extends HTMLElement {
     if (this.progressContainerLoader) {
       this.progressContainerLoader.classList.toggle("hidden", this.isHidden);
     }
-  }
-
-  private getElement<T extends Element>(
-    root: ShadowRoot,
-    selector: string
-  ): T | null {
-    const element = root.querySelector<T>(selector);
-    if (!element) {
-      console.error(`Element not found for selector: ${selector}`);
-    }
-    return element;
   }
 }
