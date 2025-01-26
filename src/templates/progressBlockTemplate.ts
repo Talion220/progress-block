@@ -7,9 +7,9 @@ export function progressBlockTemplate(): string {
             <h4 class="progress-h">Progress</h4>
             <div class="progress-container">
               <div class="progress-container-loader">
-                <svg id="progress" viewBox="0 0 48 48" class="loader">
-                  <path class="loader-background" d="M24 3 a 21 21 0 0 1 0 42 a 21 21 0 0 1 0 -42" />
-                  <path id="progress-loader" class="progress-loader" stroke-dasharray="0, 132" d="M24 3 a 21 21 0 0 1 0 42 a 21 21 0 0 1 0 -42" />
+                <svg id="progress" class="loader">
+                  <circle class="loader-background" cx="60" cy="60" r="55" />
+                  <circle id="progress-loader" class="progress-loader" cx="60" cy="60" r="55" />
                 </svg>
               </div>
               <div class="progress-container-api">

@@ -1,7 +1,7 @@
 import { progressBlockTemplate } from "../templates/progressBlockTemplate";
 
 export class ProgressBlock extends HTMLElement {
-  private progressLoader: SVGPathElement | null = null;
+  private progressLoader: SVGCircleElement | null = null;
   private progressValueInput: HTMLInputElement | null = null;
   private animateCheckbox: HTMLInputElement | null = null;
   private hideCheckbox: HTMLInputElement | null = null;
@@ -56,7 +56,7 @@ export class ProgressBlock extends HTMLElement {
   }
 
   private initializeElements(shadow: ShadowRoot) {
-    this.progressLoader = this.getElement<SVGPathElement>(
+    this.progressLoader = this.getElement<SVGCircleElement>(
       shadow,
       "#progress-loader"
     );
@@ -135,7 +135,7 @@ export class ProgressBlock extends HTMLElement {
 
   private renderLoaderProgress() {
     if (this.progressLoader) {
-      const radius = 21;
+      const radius = this.progressLoader.r.baseVal.value;
       const circumference = 2 * Math.PI * radius;
       const validatedValue = this.validateInput();
       const offset = (validatedValue / 100) * circumference;
@@ -163,7 +163,8 @@ export class ProgressBlock extends HTMLElement {
 
   private toggleAnimation() {
     if (this.progressLoader) {
-      this.progressLoader.classList.toggle("animated", this.isAnimated);
+      const playState = this.isAnimated ? "running" : "paused";
+      this.progressLoader.style.animationPlayState = playState;
     }
   }
 

@@ -32,19 +32,21 @@
 .loader {
   max-width: 120px;
   max-height: 120px;
+  transform: rotate(-90deg);
 }
 
 .loader-background {
   fill: none;
   stroke: rgba(223, 230, 240, 1);
-  stroke-width: 4;
+  stroke-width: 10px;
 }
 
 .progress-loader {
   fill: none;
-  stroke-width: 4;
+  stroke-width: 10px;
   stroke: rgba(0, 93, 255, 1);
-  transition: stroke-dasharray;
+  animation: rotate 2s linear infinite;
+  animation-play-state: paused;
   transform-origin: center;
 }
 
@@ -125,6 +127,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .animated {
   animation: rotate 2s linear infinite;
+  animation-play-state: paused;
   transform-origin: 50% 50%;
   transform-origin: center;
 }
